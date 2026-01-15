@@ -47,8 +47,8 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
         description: _descriptionController.text,
         latitude: locationController.currentPosition?.latitude,
         longitude: locationController.currentPosition?.longitude,
-        weather: locationController.currentWeather != null
-            ? '${locationController.currentWeather!.weatherMain}, ${locationController.currentWeather!.temperature?.celsius?.toStringAsFixed(1)}°C'
+        weather: locationController.weather != null
+            ? '${locationController.weather!.weatherMain}, ${locationController.weather!.temperature?.celsius?.toStringAsFixed(1)}°C'
             : null,
       );
       taskController.createTask(task, image: _image);
@@ -156,9 +156,19 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
   Widget _buildLocationInfo() {
     return Consumer<LocationController>(
       builder: (context, locationController, child) {
-        if (locationController.isLoading) {
+        if (locationController.loading) {
           return const Center(child: CircularProgressIndicator());
         }
+
+        if (locationController.error != null) {
+          return Center(
+            child: Text(
+              'Error: ${locationController.error}',
+              style: const TextStyle(color: Colors.red),
+            ),
+          );
+        }
+
         if (locationController.currentPosition != null) {
           return Card(
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -182,14 +192,14 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                     ],
                   ),
                   const SizedBox(height: 8),
-                  if (locationController.currentWeather != null)
+                  if (locationController.weather != null)
                     Row(
                       children: [
                         const Icon(Icons.thermostat, size: 18, color: Colors.orangeAccent),
                         const SizedBox(width: 8),
                         Expanded(
                           child: Text(
-                            '${locationController.currentWeather!.weatherMain}, ${locationController.currentWeather!.temperature?.celsius?.toStringAsFixed(1)}°C',
+                            '${locationController.weather!.weatherMain}, ${locationController.weather!.temperature?.celsius?.toStringAsFixed(1)}°C',
                           ),
                         ),
                       ],

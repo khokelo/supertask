@@ -2,9 +2,11 @@ import 'dart:developer' as developer;
 import 'package:weather/weather.dart';
 
 class WeatherService {
-  final WeatherFactory _wf = WeatherFactory("YOUR_API_KEY");
+  final WeatherFactory _wf;
 
-  Future<Weather> getWeather(double lat, double lon) async {
+  WeatherService(String apiKey) : _wf = WeatherFactory(apiKey);
+
+  Future<Weather> getCurrentWeather(double lat, double lon) async {
     try {
       Weather weather = await _wf.currentWeatherByLocation(lat, lon);
       return weather;
