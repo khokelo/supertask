@@ -1,0 +1,16 @@
+# Konfigurasi untuk men-deploy aplikasi Flutter Web ke Netlify
+
+[build]
+  # Perintah ini akan dijalankan oleh Netlify untuk membangun situs Anda.
+  command = "flutter build web"
+  
+  # Direktori ini berisi file-file yang telah di-build dan akan di-deploy.
+  publish = "build/web"
+
+# Aturan pengalihan ini sangat penting untuk Single Page Applications (SPA) seperti Flutter.
+# Ini memastikan bahwa semua permintaan URL diarahkan ke file index.html utama, 
+# yang kemudian memungkinkan router Flutter (go_router) untuk menangani rute sisi klien.
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
