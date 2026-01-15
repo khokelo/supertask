@@ -4,6 +4,7 @@ import 'package:myapp/models/task.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:developer' as developer;
+import 'package:collection/collection.dart';
 
 class TaskController with ChangeNotifier {
   List<Task> _tasks = [];
@@ -14,6 +15,18 @@ class TaskController with ChangeNotifier {
   List<Task> get tasks => _tasks;
   bool get isLoading => _isLoading;
   String? get error => _error;
+
+  // Getter untuk data grafik
+  Map<DateTime, int> get completedTasksByDay {
+    final completedTasks = _tasks.where((task) => task.isCompleted && task.completedAt != null);
+
+    final groupedTasks = groupBy(completedTasks, (Task task) {
+      final date = task.completedAt!;
+      return DateTime(date.year, date.month, date.day);
+    });
+
+    return groupedTasks.map((key, value) => MapEntry(key, value.length));
+  }
 
   void _setState({bool loading = false, String? error}) {
     _isLoading = loading;
@@ -40,9 +53,11 @@ class TaskController with ChangeNotifier {
 
   Future<void> createTask(Task task, {File? image}) async {
     _setState(loading: true);
+    final newTask = task.copyWith(createdAt: DateTime.now());
+
     try {
       final request = http.MultipartRequest('POST', Uri.parse('$_baseUrl/tasks'));
-      request.fields['task'] = json.encode(task.toJson());
+      request.fields['task'] = json.encode(newTask.toJson());
 
       if (image != null) {
         request.files.add(await http.MultipartFile.fromPath('image', image.path));
@@ -62,7 +77,7 @@ class TaskController with ChangeNotifier {
     }
   }
 
- Future<void> updateTask(Task task, {File? image}) async {
+  Future<void> updateTask(Task task, {File? image}) async {
     _setState(loading: true);
     try {
       final request = http.MultipartRequest('PUT', Uri.parse('$_baseUrl/tasks/${task.id}'));
@@ -86,7 +101,6 @@ class TaskController with ChangeNotifier {
     }
   }
 
-
   Future<void> deleteTask(String id) async {
     _setState(loading: true);
     try {
@@ -104,8 +118,12 @@ class TaskController with ChangeNotifier {
   }
 
   Future<void> toggleTaskStatus(Task task) async {
-    final updatedTask = task.copyWith(isCompleted: !task.isCompleted);
-    // Langsung update tanpa mengubah state loading utama untuk responsivitas UI
+    final isCompleted = !task.isCompleted;
+    final updatedTask = task.copyWith(
+      isCompleted: isCompleted,
+      completedAt: () => isCompleted ? DateTime.now() : null,
+    );
+
     try {
       final response = await http.put(
         Uri.parse('$_baseUrl/tasks/${task.id}'),
@@ -119,7 +137,6 @@ class TaskController with ChangeNotifier {
           notifyListeners();
         }
       } else {
-        // Jika gagal, bisa tampilkan snackbar atau log error tanpa mengganggu UI utama
         developer.log("Failed to toggle task status");
       }
     } catch (e) {

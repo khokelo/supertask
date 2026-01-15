@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart';
+
 class Task {
   final String id;
   final String title;
@@ -7,6 +9,8 @@ class Task {
   final double? latitude;
   final double? longitude;
   final String? weather;
+  final DateTime createdAt;
+  final DateTime? completedAt;
 
   Task({
     required this.id,
@@ -17,18 +21,41 @@ class Task {
     this.latitude,
     this.longitude,
     this.weather,
+    required this.createdAt,
+    this.completedAt,
   });
+
+  static DateTime _parseDate(dynamic date) {
+    if (date is String) {
+      return DateTime.tryParse(date) ?? DateTime.now();
+    } else if (date is Map && date.containsKey('_seconds')) {
+      return DateTime.fromMillisecondsSinceEpoch(date['_seconds'] * 1000);
+    }
+    return DateTime.now();
+  }
+
+  static DateTime? _parseNullableDate(dynamic date) {
+    if (date == null) return null;
+    if (date is String) {
+      return DateTime.tryParse(date);
+    } else if (date is Map && date.containsKey('_seconds')) {
+      return DateTime.fromMillisecondsSinceEpoch(date['_seconds'] * 1000);
+    }
+    return null;
+  }
 
   factory Task.fromJson(Map<String, dynamic> json) {
     return Task(
-      id: json['id'],
-      title: json['title'],
-      description: json['description'],
+      id: json['id'] ?? '',
+      title: json['title'] ?? '',
+      description: json['description'] ?? '',
       isCompleted: json['isCompleted'] ?? false,
       imageUrl: json['imageUrl'],
       latitude: json['latitude'],
       longitude: json['longitude'],
       weather: json['weather'],
+      createdAt: _parseDate(json['createdAt']),
+      completedAt: _parseNullableDate(json['completedAt']),
     );
   }
 
@@ -42,6 +69,8 @@ class Task {
       'latitude': latitude,
       'longitude': longitude,
       'weather': weather,
+      'createdAt': createdAt.toIso8601String(),
+      'completedAt': completedAt?.toIso8601String(),
     };
   }
 
@@ -54,6 +83,8 @@ class Task {
     double? latitude,
     double? longitude,
     String? weather,
+    DateTime? createdAt,
+    ValueGetter<DateTime?>? completedAt,
   }) {
     return Task(
       id: id ?? this.id,
@@ -64,6 +95,8 @@ class Task {
       latitude: latitude ?? this.latitude,
       longitude: longitude ?? this.longitude,
       weather: weather ?? this.weather,
+      createdAt: createdAt ?? this.createdAt,
+      completedAt: completedAt != null ? completedAt() : this.completedAt,
     );
   }
 }

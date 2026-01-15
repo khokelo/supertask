@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:myapp/controllers/task_controller.dart';
 import 'package:provider/provider.dart';
+import 'package:intl/intl.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -88,6 +89,12 @@ class _HomeScreenState extends State<HomeScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(task.description),
+                          const SizedBox(height: 8),
+                          // --- Menampilkan Tanggal --- 
+                          Text(
+                            DateFormat('dd MMMM yyyy').format(task.createdAt),
+                            style: const TextStyle(color: Colors.grey, fontSize: 12),
+                          ),
                           const SizedBox(height: 8),
                           if (task.latitude != null && task.longitude != null)
                             Row(

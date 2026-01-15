@@ -26,8 +26,10 @@ Aplikasi ini mengikuti arsitektur bersih yang memisahkan antara `tampilan`, `log
 
 ### 2. Manajemen Tugas Harian (CRUD)
 - **Atribut Tugas**: Judul, deskripsi, tanggal, status, foto, lokasi, dan cuaca.
+- **Fungsi Tanggal**: Tanggal pembuatan dan penyelesaian tugas dicatat secara otomatis.
 - **Operasi**: Pengguna dapat menambah, mengedit, menghapus, dan menandai tugas sebagai selesai.
 - **Filter**: Pengguna dapat memfilter tugas berdasarkan tanggal.
+- **Tampilan Tanggal**: Tanggal pembuatan setiap tugas ditampilkan dengan jelas di daftar tugas.
 
 ### 3. Unggah Gambar
 - **Sumber Gambar**: Pengguna dapat memilih gambar dari kamera atau galeri.
@@ -41,6 +43,7 @@ Aplikasi ini mengikuti arsitektur bersih yang memisahkan antara `tampilan`, `log
 
 ### 5. Dasbor
 - **Statistik**: Menampilkan jumlah total tugas dan tugas yang telah selesai.
+- **Grafik Penyelesaian Tugas**: Grafik batang baru yang memvisualisasikan jumlah tugas yang diselesaikan per hari selama 7 hari terakhir.
 - **Grafik**: Grafik mingguan untuk melacak kemajuan dan diagram lingkaran untuk status tugas.
 
 ### 6. UI & UX
@@ -54,3 +57,13 @@ Aplikasi ini mengikuti arsitektur bersih yang memisahkan antara `tampilan`, `log
 - **Beralih Tema**: Pengguna dapat beralih antara tema terang dan gelap.
 - **Simpan Preferensi**: Menyimpan preferensi tema pengguna.
 - **UI Dinamis**: Antarmuka beradaptasi dengan tema yang dipilih.
+
+## Rencana Saat Ini: Penambahan Fitur Tanggal dan Grafik Dasbor
+
+- **[Selesai]** **Perbarui Model Data**: Menambahkan bidang `createdAt` dan `completedAt` ke model `Task`.
+- **[Selesai]** **Tambahkan Pustaka Grafik**: Menambahkan pustaka `fl_chart` ke proyek.
+- **[Selesai]** **Perbarui Logika Kontroler**: Memodifikasi `TaskController` untuk mengelola tanggal pembuatan/penyelesaian dan membuat data agregat untuk grafik.
+- **[Selesai]** **Buat Grafik Baru**: Membuat widget `CompletedTasksChart` baru untuk menampilkan penyelesaian tugas harian.
+- **[Selesai]** **Integrasikan Grafik**: Menambahkan grafik baru ke `DashboardScreen`.
+- **[Selesai]** **Perbarui UI Daftar Tugas**: Menampilkan tanggal pembuatan di setiap kartu tugas di `HomeScreen`.
+- **[Selesai]** **Dokumentasi**: Memperbarui `blueprint.md` untuk mencerminkan semua perubahan.

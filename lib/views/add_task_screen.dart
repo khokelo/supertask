@@ -45,6 +45,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
         id: DateTime.now().toIso8601String(),
         title: _titleController.text,
         description: _descriptionController.text,
+        createdAt: DateTime.now(), // --- Menyediakan createdAt ---
         latitude: locationController.currentPosition?.latitude,
         longitude: locationController.currentPosition?.longitude,
         weather: locationController.weather != null
