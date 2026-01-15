@@ -1,6 +1,7 @@
 [build]
-  # Perintah ini sekarang akan menginstal Flutter terlebih dahulu, lalu membangun aplikasi Anda.
-  command = "git clone https://github.com/flutter/flutter.git --depth 1 --branch stable && ./flutter/bin/flutter pub get && ./flutter/bin/flutter build web"
+  # Perintah ini sekarang akan menginstal Flutter, lalu membangun aplikasi
+  # dengan variabel lingkungan yang diteruskan sebagai dart-define.
+  command = "git clone https://github.com/flutter/flutter.git --depth 1 --branch stable && ./flutter/bin/flutter pub get && ./flutter/bin/flutter build web --dart-define=API_BASE_URL=$API_BASE_URL --dart-define=WEATHER_API_KEY=$WEATHER_API_KEY"
   
   # Direktori publikasi tetap sama.
   publish = "build/web"

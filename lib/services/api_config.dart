@@ -1,5 +1,10 @@
 class ApiConfig {
-  static const String baseUrl = 'https://api.example.com'; // Ersetzen Sie dies durch Ihre tatsächliche Backend-URL
+  // Menggunakan String.fromEnvironment untuk membaca variabel lingkungan saat build.
+  // Jika 'API_BASE_URL' tidak disetel, akan kembali ke 'http://localhost:3000'.
+  static const String baseUrl = String.fromEnvironment(
+    'API_BASE_URL',
+    defaultValue: 'http://localhost:3000',
+  );
 
   // Authentifizierung
   static const String login = '/login';

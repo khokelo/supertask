@@ -15,7 +15,14 @@ class LocationController with ChangeNotifier {
   bool get loading => _loading;
   String? get error => _error;
 
-  final WeatherService _weatherService = WeatherService("4223f2115e0c8b35b639e14de7131175");
+  // Menggunakan String.fromEnvironment untuk membaca variabel lingkungan.
+  // Kunci API yang lama digunakan sebagai nilai default untuk pengembangan lokal.
+  static const String _apiKey = String.fromEnvironment(
+    'WEATHER_API_KEY',
+    defaultValue: '4223f2115e0c8b35b639e14de7131175',
+  );
+
+  final WeatherService _weatherService = WeatherService(_apiKey);
 
   Future<void> getCurrentLocationAndWeather() async {
     _loading = true;
