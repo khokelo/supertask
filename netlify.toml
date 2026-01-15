@@ -1,15 +1,10 @@
-# Konfigurasi untuk men-deploy aplikasi Flutter Web ke Netlify
-
 [build]
-  # Perintah ini akan dijalankan oleh Netlify untuk membangun situs Anda.
-  command = "flutter build web"
+  # Perintah ini sekarang akan menginstal Flutter terlebih dahulu, lalu membangun aplikasi Anda.
+  command = "git clone https://github.com/flutter/flutter.git --depth 1 --branch stable && ./flutter/bin/flutter pub get && ./flutter/bin/flutter build web"
   
-  # Direktori ini berisi file-file yang telah di-build dan akan di-deploy.
+  # Direktori publikasi tetap sama.
   publish = "build/web"
 
-# Aturan pengalihan ini sangat penting untuk Single Page Applications (SPA) seperti Flutter.
-# Ini memastikan bahwa semua permintaan URL diarahkan ke file index.html utama, 
-# yang kemudian memungkinkan router Flutter (go_router) untuk menangani rute sisi klien.
 [[redirects]]
   from = "/*"
   to = "/index.html"
