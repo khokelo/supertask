@@ -16,10 +16,10 @@ class LocationController with ChangeNotifier {
   String? get error => _error;
 
   // Menggunakan String.fromEnvironment untuk membaca variabel lingkungan.
-  // Kunci API yang lama digunakan sebagai nilai default untuk pengembangan lokal.
+  // Kunci API yang baru digunakan sebagai nilai default untuk pengembangan lokal.
   static const String _apiKey = String.fromEnvironment(
     'WEATHER_API_KEY',
-    defaultValue: '4223f2115e0c8b35b639e14de7131175',
+    defaultValue: '180d3346877967907ef88471d0d7a329',
   );
 
   final WeatherService _weatherService = WeatherService(_apiKey);
