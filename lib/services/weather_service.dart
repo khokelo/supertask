@@ -1,14 +1,16 @@
+import 'dart:developer' as developer;
 import 'package:weather/weather.dart';
 
 class WeatherService {
-  final WeatherFactory _wf = WeatherFactory('180d3346877967907ef88471d0d7a329'); // Ganti dengan kunci API Anda
+  final WeatherFactory _wf = WeatherFactory("YOUR_API_KEY");
 
-  Future<Weather?> getCurrentWeather(double lat, double lon) async {
+  Future<Weather> getWeather(double lat, double lon) async {
     try {
-      return await _wf.currentWeatherByLocation(lat, lon);
+      Weather weather = await _wf.currentWeatherByLocation(lat, lon);
+      return weather;
     } catch (e) {
-      print(e);
-      return null;
+      developer.log("Error getting weather: $e");
+      rethrow;
     }
   }
 }

@@ -1,71 +1,67 @@
-import 'dart:io';
-import 'package:dio/dio.dart';
-import 'package:myapp/models/task.dart';
-import 'package:myapp/models/user.dart';
-import 'package:myapp/services/api_config.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'api_config.dart';
 
 class ApiService {
-  final Dio _dio = Dio();
+  final String baseUrl = ApiConfig.baseUrl;
 
-  Future<String?> _uploadImage(File image) async {
-    try {
-      String fileName = image.path.split('/').last;
-      FormData formData = FormData.fromMap({
-        "file": await MultipartFile.fromFile(image.path, filename: fileName),
-      });
-      final response = await _dio.post(
-        ApiConfig.baseUrl + '/upload', // Assuming an /upload endpoint
-        data: formData,
-      );
-      return response.data['url']; // Assuming the server returns the URL
-    } catch (e) {
-      return null;
+  // User
+  Future<Map<String, dynamic>> login(String email, String password) async {
+    final response = await http.post(
+      Uri.parse('$baseUrl/login'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({'email': email, 'password': password}),
+    );
+    return _handleResponse(response);
+  }
+
+  Future<Map<String, dynamic>> register(String email, String password) async {
+    final response = await http.post(
+      Uri.parse('$baseUrl/register'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({'email': email, 'password': password}),
+    );
+    return _handleResponse(response);
+  }
+
+  // Tasks
+  Future<List<dynamic>> getTasks() async {
+    final response = await http.get(Uri.parse('$baseUrl/tasks'));
+    return _handleResponse(response);
+  }
+
+  Future<Map<String, dynamic>> createTask(Map<String, dynamic> taskData) async {
+    final response = await http.post(
+      Uri.parse('$baseUrl/tasks'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode(taskData),
+    );
+    return _handleResponse(response);
+  }
+
+  Future<Map<String, dynamic>> updateTask(
+      String taskId, Map<String, dynamic> taskData) async {
+    final response = await http.put(
+      Uri.parse('$baseUrl/tasks/$taskId'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode(taskData),
+    );
+    return _handleResponse(response);
+  }
+
+  Future<void> deleteTask(String taskId) async {
+    final response = await http.delete(Uri.parse('$baseUrl/tasks/$taskId'));
+    _handleResponse(response, noBody: true);
+  }
+
+  // Generic response handler
+  dynamic _handleResponse(http.Response response, {bool noBody = false}) {
+    if (response.statusCode >= 200 && response.statusCode < 300) {
+      if (noBody) return;
+      return jsonDecode(response.body);
+    } else {
+      throw Exception(
+          'Failed to perform action. Status code: ${response.statusCode}');
     }
-  }
-
-  Future<User> login(String email, String password) async {
-    final response = await _dio.post(
-      ApiConfig.baseUrl + ApiConfig.login,
-      data: {'email': email, 'password': password},
-    );
-    return User.fromJson(response.data);
-  }
-
-  Future<User> register(String name, String email, String password) async {
-    final response = await _dio.post(
-      ApiConfig.baseUrl + ApiConfig.register,
-      data: {'name': name, 'email': email, 'password': password},
-    );
-    return User.fromJson(response.data);
-  }
-
-  Future<List<Task>> getTasks() async {
-    final response = await _dio.get(ApiConfig.baseUrl + ApiConfig.tasks);
-    return (response.data as List).map((task) => Task.fromJson(task)).toList();
-  }
-
-  Future<Task> createTask(Task task, {File? image}) async {
-    String? imageUrl;
-    if (image != null) {
-      imageUrl = await _uploadImage(image);
-    }
-    final taskWithImage = task.copyWith(imageUrl: imageUrl);
-    final response = await _dio.post(
-      ApiConfig.baseUrl + ApiConfig.tasks,
-      data: taskWithImage.toJson(),
-    );
-    return Task.fromJson(response.data);
-  }
-
-  Future<Task> updateTask(Task task) async {
-    final response = await _dio.put(
-      ApiConfig.baseUrl + ApiConfig.tasks + '/${task.id}',
-      data: task.toJson(),
-    );
-    return Task.fromJson(response.data);
-  }
-
-  Future<void> deleteTask(String id) async {
-    await _dio.delete(ApiConfig.baseUrl + ApiConfig.tasks + '/$id');
   }
 }
